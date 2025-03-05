@@ -21,20 +21,10 @@ interface EmailViewProps {
   folder?: "inbox" | "sent"
 }
 
-const debug = {
-  log: (action: string, data?: any) => {
-    console.log(`[EmailView] ${action}`, data || "")
-  },
-  error: (action: string, error: any) => {
-    console.error(`[EmailView] ${action} failed:`, error)
-  },
-}
-
 export function EmailView({ email, onClose, folder = "inbox" }: EmailViewProps) {
   useEffect(() => {
     const markAsRead = async () => {
       if (!email.read) {
-        debug.log("Marking email as read", { emailId: email.id })
         try {
           const response = await fetch("/api/emails/read", {
             method: "POST",
@@ -45,12 +35,10 @@ export function EmailView({ email, onClose, folder = "inbox" }: EmailViewProps) 
           })
 
           if (!response.ok) {
-            throw new Error("Failed to mark email as read")
+            throw new Error("Неуспешно маркиране като прочетено")
           }
-
-          debug.log("Email marked as read successfully")
         } catch (error) {
-          debug.error("Mark as read", error)
+          console.error("Грешка при маркиране като прочетено:", error)
         }
       }
     }
@@ -63,30 +51,30 @@ export function EmailView({ email, onClose, folder = "inbox" }: EmailViewProps) 
       <div className="border-b border-zinc-800 p-4">
         <Button variant="ghost" className="mb-4 font-mono text-zinc-400 hover:text-white" onClick={onClose}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          BACK
+          НАЗАД
         </Button>
 
-        <h3 className="font-mono text-lg font-bold">{email.subject}</h3>
-        <div className="mt-2 space-y-1 text-sm">
+        <h3 className="font-mono text-base sm:text-lg font-bold break-words">{email.subject}</h3>
+        <div className="mt-2 space-y-1 text-xs sm:text-sm">
           <div className="flex items-center text-zinc-400">
-            <span className="w-20 font-mono">FROM:</span>
-            <span className="font-mono">{folder === "sent" ? email.recipient : email.sender}</span>
+            <span className="w-16 sm:w-20 font-mono">ОТ:</span>
+            <span className="font-mono break-words">{folder === "sent" ? email.recipient : email.sender}</span>
           </div>
           {email.recipient && (
             <div className="flex items-center text-zinc-400">
-              <span className="w-20 font-mono">TO:</span>
-              <span className="font-mono">{folder === "sent" ? email.sender : email.recipient}</span>
+              <span className="w-16 sm:w-20 font-mono">ДО:</span>
+              <span className="font-mono break-words">{folder === "sent" ? email.sender : email.recipient}</span>
             </div>
           )}
           <div className="flex items-center text-zinc-400">
-            <span className="w-20 font-mono">DATE:</span>
-            <span className="font-mono">{format(new Date(email.timestamp), "MM/dd/yyyy HH:mm")}</span>
+            <span className="w-16 sm:w-20 font-mono">ДАТА:</span>
+            <span className="font-mono">{format(new Date(email.timestamp), "dd/MM/yyyy HH:mm")}</span>
           </div>
         </div>
       </div>
 
       <div className="flex-1 overflow-auto p-4">
-        <div className="whitespace-pre-wrap font-mono text-sm">{email.body}</div>
+        <div className="whitespace-pre-wrap font-mono text-xs sm:text-sm">{email.body}</div>
       </div>
     </div>
   )

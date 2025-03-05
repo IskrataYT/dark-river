@@ -36,12 +36,14 @@ export default async function NotePage({ params }: PageProps) {
 
   return (
     <>
-      <Navbar userName={session.name} isAdmin={session.isAdmin} />
+      <Navbar userName={session.name} isAdmin={session.isAdmin} isDonor={session.isDonor} />
       <main className="flex min-h-screen flex-col bg-black p-4 text-white">
         <div className="mx-auto w-full max-w-6xl flex-1 py-20">
           <div className="h-[calc(100vh-12rem)] rounded-lg border border-zinc-800 bg-zinc-950">
-            <div className="grid h-full grid-cols-[300px,1fr]">
-              <NoteList notes={notes} />
+            <div className="grid h-full grid-cols-1 md:grid-cols-[300px,1fr]">
+              <div className="hidden md:block">
+                <NoteList notes={notes} />
+              </div>
               <NoteEditor note={note} />
             </div>
           </div>

@@ -41,6 +41,30 @@ const userSchema = new mongoose.Schema(
     verificationTokenExpiry: Date,
     resetToken: String,
     resetTokenExpiry: Date,
+    isBanned: {
+      type: Boolean,
+      default: false,
+    },
+    banReason: {
+      type: String,
+      default: null,
+    },
+    bannedAt: {
+      type: Date,
+      default: null,
+    },
+    isDonor: {
+      type: Boolean,
+      default: false,
+    },
+    donorSince: {
+      type: Date,
+      default: null,
+    },
+    donationNotes: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true },
 )

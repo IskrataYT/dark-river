@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Hash, Plus, Trash2, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Plus, Hash, Trash2, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Channel {
@@ -19,113 +19,71 @@ interface ChannelListProps {
   isAdmin: boolean
   selectedChannel: string | null
   onSelectChannel: (channelId: string) => void
+  channels: Channel[]
+  isLoading: boolean
+  onCreateChannel: (channel: { name: string; description: string }) => Promise<void>
+  onDeleteChannel: (channelId: string) => Promise<void>
 }
 
-export function ChannelList({ isAdmin, selectedChannel, onSelectChannel }: ChannelListProps) {
-  const [channels, setChannels] = useState<Channel[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isCreating, setIsCreating] = useState(false)
-  const [newChannel, setNewChannel] = useState({ name: "", description: "" })
-  const [error, setError] = useState("")
+export function ChannelList({
+  isAdmin,
+  selectedChannel,
+  onSelectChannel,
+  channels,
+  isLoading,
+  onCreateChannel,
+  onDeleteChannel,
+}: ChannelListProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
-
-  useEffect(() => {
-    fetchChannels()
-  }, [])
-
-  const fetchChannels = async () => {
-    try {
-      setIsLoading(true)
-      const response = await fetch("/api/community/channels")
-      const data = await response.json()
-
-      if (!response.ok) throw new Error(data.error)
-
-      setChannels(data.channels)
-
-      // Auto-select first channel if none selected
-      if (data.channels.length > 0 && !selectedChannel) {
-        onSelectChannel(data.channels[0]._id)
-      }
-    } catch (error) {
-      console.error("Failed to fetch channels:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const [newChannel, setNewChannel] = useState({ name: "", description: "" })
+  const [isCreating, setIsCreating] = useState(false)
+  const [error, setError] = useState("")
 
   const handleCreateChannel = async () => {
-    if (isCreating) return
-
     try {
-      setError("")
       setIsCreating(true)
-      const response = await fetch("/api/community/channels", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newChannel),
-      })
-
-      const data = await response.json()
-      if (!response.ok) {
-        throw new Error(data.error)
-      }
-
+      setError("")
+      await onCreateChannel(newChannel)
       setNewChannel({ name: "", description: "" })
       setDialogOpen(false)
-      await fetchChannels()
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to create channel")
+    } catch (error: any) {
+      setError(error.message)
     } finally {
       setIsCreating(false)
     }
   }
 
   const handleDeleteChannel = async (channelId: string) => {
-    if (!confirm("Are you sure you want to delete this channel?")) return
-
+    if (!confirm("Сигурни ли сте, че искате да изтриете този канал?")) return
     try {
-      const response = await fetch(`/api/community/channels/${channelId}`, {
-        method: "DELETE",
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to delete channel")
-      }
-
-      await fetchChannels()
-    } catch (error) {
-      console.error("Failed to delete channel:", error)
+      await onDeleteChannel(channelId)
+    } catch (error: any) {
+      console.error("Error deleting channel:", error)
     }
   }
 
   return (
-    <div className="w-64 border-r border-zinc-800 bg-zinc-950">
-      <div className="p-4">
+    <div className="h-full flex flex-col">
+      <div className="p-2 sm:p-4 border-b border-zinc-800">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-mono text-lg font-bold">CHANNELS</h2>
+          <h2 className="font-mono text-sm sm:text-lg font-bold">КАНАЛИ</h2>
           {isAdmin && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="hover:bg-zinc-900">
+                <Button variant="ghost" size="icon" className="hover:bg-zinc-900 mr-2">
                   <Plus className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-zinc-950 text-white" aria-describedby="channel-dialog-description">
+              <DialogContent className="bg-zinc-950 text-white">
                 <DialogHeader>
-                  <DialogTitle>Create Channel</DialogTitle>
+                  <DialogTitle>Създаване на канал</DialogTitle>
                 </DialogHeader>
-                <div id="channel-dialog-description" className="sr-only">
-                  Create a new channel by entering a name and description
-                </div>
                 {error && (
                   <div className="rounded border border-red-800 bg-red-950/50 p-3 text-sm text-red-500">{error}</div>
                 )}
                 <div className="grid gap-4 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Channel Name</Label>
+                    <Label htmlFor="name">Име на канала</Label>
                     <Input
                       id="name"
                       value={newChannel.name}
@@ -135,7 +93,7 @@ export function ChannelList({ isAdmin, selectedChannel, onSelectChannel }: Chann
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">Описание</Label>
                     <Textarea
                       id="description"
                       value={newChannel.description}
@@ -149,19 +107,18 @@ export function ChannelList({ isAdmin, selectedChannel, onSelectChannel }: Chann
                   {isCreating ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating...
+                      Създаване...
                     </>
                   ) : (
-                    "Create Channel"
+                    "Създай канал"
                   )}
                 </Button>
               </DialogContent>
             </Dialog>
           )}
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1 overflow-y-auto max-h-[calc(100vh-12rem)]">
           {isLoading ? (
-            // Loading skeletons
             Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="flex items-center space-x-2 px-2 py-2">
                 <Skeleton className="h-4 w-4" />
@@ -169,7 +126,7 @@ export function ChannelList({ isAdmin, selectedChannel, onSelectChannel }: Chann
               </div>
             ))
           ) : channels.length === 0 ? (
-            <div className="px-2 py-4 text-center text-sm text-zinc-500">No channels available</div>
+            <div className="px-2 py-4 text-center text-sm text-zinc-500">Няма налични канали</div>
           ) : (
             channels.map((channel) => (
               <div

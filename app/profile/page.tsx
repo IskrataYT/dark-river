@@ -4,6 +4,11 @@ import { Navbar } from "@/components/layout/navbar"
 import { ProfileForm } from "@/components/profile/profile-form"
 import { Footer } from "@/components/layout/footer"
 
+export const metadata = {
+  title: "Dark River | Профил",
+  description: "Управлявайте вашия профил в Dark River - актуализирайте информацията за вашия агент",
+}
+
 export default async function Profile() {
   const session = await getSession()
 
@@ -13,7 +18,7 @@ export default async function Profile() {
 
   return (
     <>
-      <Navbar userName={session.name} isAdmin={session.isAdmin} />
+      <Navbar userName={session.name} isAdmin={session.isAdmin} isDonor={session.isDonor} />
       <main className="flex min-h-screen flex-col items-center justify-center bg-black text-white">
         <div className="relative w-full max-w-md px-4">
           <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-10"></div>

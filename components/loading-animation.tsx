@@ -14,29 +14,29 @@ export function LoadingAnimation({ redirectTo = "/", delay = 500 }: LoadingAnima
   const [showCursor, setShowCursor] = useState(true)
 
   const messages = [
-    "INITIALIZING DARK RIVER PROTOCOLS",
-    "ESTABLISHING SECURE CONNECTION",
-    "DECRYPTING ACCESS CREDENTIALS",
-    "AUTHENTICATING AGENT IDENTITY",
-    "ACCESS GRANTED",
+    "ИНИЦИАЛИЗИРАНЕ НА DARK RIVER ПРОТОКОЛИ",
+    "УСТАНОВЯВАНЕ НА СИГУРНА ВРЪЗКА",
+    "ДЕКРИПТИРАНЕ НА ДОСТЪПНИ ДАННИ",
+    "УДОСТОВЕРЯВАНЕ НА САМОЛИЧНОСТ НА АГЕНТА",
+    "ДОСТЪП РАЗРЕШЕН",
   ]
 
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
 
   const handleComplete = useCallback(() => {
-    console.log(`Message ${currentMessageIndex + 1} completed.`)
+    console.log(`Съобщение ${currentMessageIndex + 1} завършено.`)
 
     if (currentMessageIndex < messages.length - 1) {
       setTimeout(() => {
         setCurrentMessageIndex((prev) => prev + 1)
       }, 500)
     } else {
-      console.log("Redirecting to:", redirectTo)
+      console.log("Пренасочване към:", redirectTo)
       setTimeout(() => {
         router.push(redirectTo)
       }, 1000)
     }
-  }, [currentMessageIndex, messages.length, redirectTo, router])
+  }, [currentMessageIndex, redirectTo, router])
 
   const { displayText, isComplete } = useTypewriter({
     text: messages[currentMessageIndex],
@@ -45,7 +45,6 @@ export function LoadingAnimation({ redirectTo = "/", delay = 500 }: LoadingAnima
     onComplete: handleComplete,
   })
 
-  // Blinking cursor effect
   useEffect(() => {
     const cursorInterval = setInterval(() => {
       setShowCursor((prev) => !prev)
@@ -58,9 +57,11 @@ export function LoadingAnimation({ redirectTo = "/", delay = 500 }: LoadingAnima
       <div className="relative w-full max-w-3xl px-4">
         <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-10"></div>
         <div className="relative z-10">
-          <h1 className="mb-12 font-mono text-5xl font-bold tracking-tighter text-white text-center">DARK RIVER</h1>
+          <h1 className="mb-8 sm:mb-12 font-mono text-3xl sm:text-5xl font-bold tracking-tighter text-white text-center">
+            DARK RIVER
+          </h1>
 
-          <div className="h-64 overflow-hidden">
+          <div className="h-48 sm:h-64 overflow-hidden">
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -72,12 +73,12 @@ export function LoadingAnimation({ redirectTo = "/", delay = 500 }: LoadingAnima
                       : "opacity-0"
                 }`}
               >
-                <div className="font-mono text-xl md:text-2xl mb-4 flex items-center">
+                <div className="font-mono text-base sm:text-xl md:text-2xl mb-4 flex items-center">
                   <span className="text-green-500 mr-2">&gt;</span>
                   <span>{index === currentMessageIndex ? displayText : message}</span>
                   {index === currentMessageIndex && !isComplete && (
                     <span
-                      className={`ml-1 inline-block w-3 h-6 bg-white transition-opacity duration-200 ${
+                      className={`ml-1 inline-block w-2 sm:w-3 h-4 sm:h-6 bg-white transition-opacity duration-200 ${
                         showCursor ? "opacity-100" : "opacity-0"
                       }`}
                     />
@@ -87,12 +88,12 @@ export function LoadingAnimation({ redirectTo = "/", delay = 500 }: LoadingAnima
             ))}
           </div>
 
-          <div className="mt-12 flex justify-center">
-            <div className="w-12 h-12 rounded-full border-t-2 border-r-2 border-white animate-spin"></div>
+          <div className="mt-8 sm:mt-12 flex justify-center">
+            <div className="w-8 sm:w-12 h-8 sm:h-12 rounded-full border-t-2 border-r-2 border-white animate-spin"></div>
           </div>
 
-          <div className="mt-8 text-center text-xs text-zinc-600">
-            <p>SYSTEM VERSION 2.4.1 // CLASSIFIED</p>
+          <div className="mt-6 sm:mt-8 text-center text-xs text-zinc-600">
+            <p>ВЕРСИЯ НА СИСТЕМАТА 2.4.1 // ПОВЕРИТЕЛНО</p>
           </div>
         </div>
       </div>

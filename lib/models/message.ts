@@ -1,33 +1,28 @@
 import mongoose from "mongoose"
 
-const messageSchema = new mongoose.Schema({
-  channelId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Channel",
-    required: true,
+const messageSchema = new mongoose.Schema(
+  {
+    content: {
+      type: String,
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    channelId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Channel",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-})
+  { timestamps: true },
+)
 
 export const Message = mongoose.models.Message || mongoose.model("Message", messageSchema)
 

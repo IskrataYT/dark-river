@@ -29,12 +29,12 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
     setError("")
 
     if (newPassword && newPassword !== confirmPassword) {
-      setError("New access codes do not match")
+      setError("Новите кодове за достъп не съвпадат")
       return
     }
 
     if (newPassword && !currentPassword) {
-      setError("Current access code is required to set a new one")
+      setError("Необходим е текущ код за достъп, за да зададете нов")
       return
     }
 
@@ -56,13 +56,13 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to update profile")
+        throw new Error(data.error || "Неуспешно актуализиране на профила")
       }
 
       // Refresh the page to update the session
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong")
+      setError(err instanceof Error ? err.message : "Нещо се обърка")
     } finally {
       setIsLoading(false)
     }
@@ -72,7 +72,7 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email" className="font-mono text-xs text-zinc-400">
-          EMAIL IDENTIFIER
+          ИМЕЙЛ ИДЕНТИФИКАТОР
         </Label>
         <div className="relative">
           <Input
@@ -87,7 +87,7 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="name" className="font-mono text-xs text-zinc-400">
-          AGENT NAME
+          ИМЕ НА АГЕНТА
         </Label>
         <div className="relative">
           <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -103,7 +103,7 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="currentPassword" className="font-mono text-xs text-zinc-400">
-          CURRENT ACCESS CODE
+          ТЕКУЩ КОД ЗА ДОСТЪП
         </Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -112,7 +112,7 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
             type={showPassword ? "text" : "password"}
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            placeholder="Enter to change access code"
+            placeholder="Въведете, за да промените кода за достъп"
             className="border-zinc-800 bg-black pl-10 pr-10 font-mono text-sm text-white placeholder:text-zinc-700"
           />
           <button
@@ -127,7 +127,7 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="newPassword" className="font-mono text-xs text-zinc-400">
-          NEW ACCESS CODE
+          НОВ КОД ЗА ДОСТЪП
         </Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -136,7 +136,7 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
             type={showPassword ? "text" : "password"}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="Optional"
+            placeholder="Незадължително"
             className="border-zinc-800 bg-black pl-10 pr-10 font-mono text-sm text-white placeholder:text-zinc-700"
           />
         </div>
@@ -144,7 +144,7 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="confirmPassword" className="font-mono text-xs text-zinc-400">
-          CONFIRM NEW ACCESS CODE
+          ПОТВЪРДЕТЕ НОВИЯ КОД ЗА ДОСТЪП
         </Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -153,7 +153,7 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
             type={showPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Optional"
+            placeholder="Незадължително"
             className="border-zinc-800 bg-black pl-10 pr-10 font-mono text-sm text-white placeholder:text-zinc-700"
           />
         </div>
@@ -168,11 +168,11 @@ export function ProfileForm({ initialName, userEmail }: ProfileFormProps) {
       >
         {isLoading ? (
           <span className="flex items-center justify-center">
-            <span className="mr-2">PROCESSING</span>
+            <span className="mr-2">ОБРАБОТКА</span>
             <span className="loading">...</span>
           </span>
         ) : (
-          "UPDATE PROFILE"
+          "АКТУАЛИЗИРАНЕ НА ПРОФИЛА"
         )}
       </Button>
     </form>

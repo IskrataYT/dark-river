@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
-    // Check if user is verified
+    // Check if user is verified - using the correct field name from the User model
     if (!user.verified) {
       return NextResponse.json({ error: "Please verify your email first" }, { status: 401 })
     }
@@ -30,12 +30,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
-    // Create session with isAdmin
+    // Create session with all necessary user properties
     const token = await createToken({
       id: user._id,
       email: user.email,
       name: user.name,
-      isAdmin: user.isAdmin, // Include isAdmin status
+      verified: user.verified,
+      isAdmin: user.isAdmin,
+      isBanned: user.isBanned,
+      isDonor: user.isDonor,
     })
 
     const response = NextResponse.json({

@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Loader2, Trash } from "lucide-react"
+import { Loader2, Trash, ArrowLeft } from "lucide-react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -48,7 +49,7 @@ export function NoteEditor({ note }: NoteEditorProps) {
   }, [title, content, note._id, debouncedSave])
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this note?")) return
+    if (!confirm("Сигурни ли сте, че искате да изтриете тази бележка?")) return
 
     try {
       setIsDeleting(true)
@@ -63,18 +64,25 @@ export function NoteEditor({ note }: NoteEditorProps) {
     <div className="flex h-full flex-col space-y-4">
       <div className="flex items-center justify-between border-b border-zinc-800 p-4">
         <div className="flex-1">
-          <Input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="border-none bg-transparent px-0 font-mono text-lg font-bold focus-visible:ring-0"
-            placeholder="Untitled Note"
-          />
+          <div className="flex items-center gap-4 mb-4">
+            <Link href="/notes">
+              <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="border-none bg-transparent px-0 font-mono text-lg font-bold focus-visible:ring-0"
+              placeholder="Бележка без заглавие"
+            />
+          </div>
         </div>
         <div className="flex items-center space-x-2">
           {isSaving && (
             <div className="flex items-center text-zinc-500">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              <span className="text-xs">Saving...</span>
+              <span className="text-xs">Запазване...</span>
             </div>
           )}
           <Button
@@ -94,7 +102,7 @@ export function NoteEditor({ note }: NoteEditorProps) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className="min-h-[500px] border-none bg-transparent font-mono focus-visible:ring-0"
-          placeholder="Start typing your investigation notes..."
+          placeholder="Започнете да пишете вашите бележки от разследването..."
         />
       </div>
     </div>

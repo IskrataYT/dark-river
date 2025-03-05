@@ -3,7 +3,7 @@ import { cookies } from "next/headers"
 import type { NextRequest } from "next/server"
 import crypto from "crypto"
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
+const key = new TextEncoder().encode(process.env.JWT_SECRET!)
 
 export async function generateOTP(): Promise<string> {
   return crypto.randomInt(100000, 999999).toString()
@@ -12,34 +12,53 @@ export async function generateOTP(): Promise<string> {
 export async function createToken(payload: any) {
   const token = await new SignJWT({
     ...payload,
-    isAdmin: payload.isAdmin || false, // Include isAdmin in the token
+    isAdmin: payload.isAdmin || false,
+    isBanned: payload.isBanned || false,
+    isDonor: payload.isDonor || false,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("24h")
-    .sign(JWT_SECRET)
+    .sign(key)
 
   return token
 }
 
+export async function encrypt(payload: any) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("24h")
+    .sign(key)
+}
+
+export async function decrypt(input: string): Promise<any> {
+  try {
+    const { payload } = await jwtVerify(input, key, {
+      algorithms: ["HS256"],
+    })
+    return payload
+  } catch (error) {
+    console.error("[Auth] Decrypt error:", error)
+    throw error
+  }
+}
+
 export async function verifyToken(token: string) {
   try {
-    const verified = await jwtVerify(token, JWT_SECRET)
-    return verified.payload
-  } catch (err) {
+    return await decrypt(token)
+  } catch (error) {
+    console.error("[Auth] Token verification failed:", error)
     throw new Error("Invalid token")
   }
 }
 
 export async function getSession() {
-  const cookieStore = cookies()
-  const token = cookieStore.get("session")?.value
-
-  if (!token) return null
-
   try {
-    const verified = await verifyToken(token)
-    return verified
-  } catch (err) {
+    const session = cookies().get("session")?.value
+    if (!session) return null
+    return await verifyToken(session)
+  } catch (error) {
+    console.error("[Auth] Get session error:", error)
     return null
   }
 }
@@ -82,7 +101,22 @@ export async function createResetToken() {
 
 export async function verifyResetToken(token: string, hashedToken: string) {
   const computedHash = crypto.createHash("sha256").update(token).digest("hex")
-
   return computedHash === hashedToken
 }
+
+// Export both the individual functions and a default auth object
+const auth = {
+  generateOTP,
+  createToken,
+  encrypt,
+  decrypt,
+  verifyToken,
+  getSession,
+  rateLimit,
+  createResetToken,
+  verifyResetToken,
+}
+
+export { auth }
+export default auth
 

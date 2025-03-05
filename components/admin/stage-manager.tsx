@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { CountdownManager } from "./countdown-manager"
 
 interface Stage {
   _id: string
@@ -42,7 +43,7 @@ export function StageManager() {
       const data = await response.json()
       setStages(data.stages)
     } catch (error) {
-      console.error("Failed to fetch stages:", error)
+      console.error("Неуспешно зареждане на етапи:", error)
     } finally {
       setLoading(false)
     }
@@ -68,15 +69,15 @@ export function StageManager() {
 
       const data = await response.json()
       if (!response.ok) {
-        throw new Error(data.error || "Failed to create stage")
+        throw new Error(data.error || "Неуспешно създаване на етап")
       }
 
       await fetchStages()
       setShowNewForm(false)
       setNewStage({ isActive: true, isInitial: false })
     } catch (error) {
-      console.error("Failed to create stage:", error)
-      setError(error instanceof Error ? error.message : "Failed to create stage")
+      console.error("Неуспешно създаване на етап:", error)
+      setError(error instanceof Error ? error.message : "Неуспешно създаване на етап")
     }
   }
 
@@ -100,57 +101,61 @@ export function StageManager() {
 
       const data = await response.json()
       if (!response.ok) {
-        throw new Error(data.error || "Failed to update stage")
+        throw new Error(data.error || "Неуспешно обновяване на етап")
       }
 
       await fetchStages()
       setEditingStage(null)
     } catch (error) {
-      console.error("Failed to update stage:", error)
-      setError(error instanceof Error ? error.message : "Failed to update stage")
+      console.error("Неуспешно обновяване на етап:", error)
+      setError(error instanceof Error ? error.message : "Неуспешно обновяване на етап")
     }
   }
 
   const handleDeleteStage = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this stage?")) return
+    if (!confirm("Сигурни ли сте, че искате да изтриете този етап?")) return
 
     try {
       const response = await fetch(`/api/admin/stages/${id}`, {
         method: "DELETE",
       })
 
-      if (!response.ok) throw new Error("Failed to delete stage")
+      if (!response.ok) throw new Error("Неуспешно изтриване на етап")
 
       await fetchStages()
     } catch (error) {
-      console.error("Failed to delete stage:", error)
+      console.error("Неуспешно изтриване на етап:", error)
     }
   }
 
   if (loading) {
-    return <div className="text-center">Loading...</div>
+    return <div className="text-center">Зареждане...</div>
   }
 
   return (
     <div className="space-y-6">
+      <CountdownManager />
+
+      <div className="border-t border-zinc-800 my-6"></div>
+
       <div className="flex items-center justify-between">
-        <h1 className="font-mono text-2xl font-bold">Email Stage Manager</h1>
+        <h1 className="font-mono text-2xl font-bold">Управление на етапи</h1>
         <Button onClick={() => setShowNewForm(true)} className="bg-white font-mono text-black hover:bg-zinc-200">
           <Plus className="mr-2 h-4 w-4" />
-          Add Stage
+          Добави етап
         </Button>
       </div>
 
       {showNewForm && (
         <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-4">
-          <h2 className="mb-4 font-mono text-lg font-bold">New Stage</h2>
+          <h2 className="mb-4 font-mono text-lg font-bold">Нов етап</h2>
           {error && (
             <div className="mb-4 rounded border border-red-800 bg-red-950/50 p-3 text-sm text-red-500">{error}</div>
           )}
           <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Stage Number</Label>
+                <Label>Номер на етап</Label>
                 <Input
                   type="number"
                   value={newStage.stage || ""}
@@ -159,7 +164,7 @@ export function StageManager() {
                 />
               </div>
               <div>
-                <Label>Next Stage</Label>
+                <Label>Следващ етап</Label>
                 <Input
                   type="number"
                   value={newStage.nextStage || ""}
@@ -170,7 +175,7 @@ export function StageManager() {
               </div>
             </div>
             <div>
-              <Label>Subject</Label>
+              <Label>Тема</Label>
               <Input
                 value={newStage.subject || ""}
                 onChange={(e) => setNewStage({ ...newStage, subject: e.target.value })}
@@ -178,7 +183,7 @@ export function StageManager() {
               />
             </div>
             <div>
-              <Label>Trigger Phrase</Label>
+              <Label>Ключова фраза</Label>
               <Input
                 value={newStage.trigger || ""}
                 onChange={(e) => setNewStage({ ...newStage, trigger: e.target.value })}
@@ -187,7 +192,7 @@ export function StageManager() {
               />
             </div>
             <div>
-              <Label>Description</Label>
+              <Label>Описание</Label>
               <Input
                 value={newStage.description || ""}
                 onChange={(e) => setNewStage({ ...newStage, description: e.target.value })}
@@ -195,7 +200,7 @@ export function StageManager() {
               />
             </div>
             <div>
-              <Label>Email Body</Label>
+              <Label>Съдържание на имейла</Label>
               <Textarea
                 value={newStage.body || ""}
                 onChange={(e) => setNewStage({ ...newStage, body: e.target.value })}
@@ -208,7 +213,7 @@ export function StageManager() {
                   checked={newStage.isActive}
                   onCheckedChange={(checked) => setNewStage({ ...newStage, isActive: checked })}
                 />
-                <Label>Active</Label>
+                <Label>Активен</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
@@ -222,13 +227,13 @@ export function StageManager() {
                     })
                   }
                 />
-                <Label>Initial Stage</Label>
+                <Label>Начален етап</Label>
               </div>
             </div>
             <div className="flex space-x-2">
               <Button onClick={handleCreateStage} className="bg-white font-mono text-black hover:bg-zinc-200">
                 <Save className="mr-2 h-4 w-4" />
-                Save
+                Запази
               </Button>
               <Button
                 variant="outline"
@@ -236,7 +241,7 @@ export function StageManager() {
                 className="border-zinc-800 font-mono hover:bg-zinc-900"
               >
                 <X className="mr-2 h-4 w-4" />
-                Cancel
+                Отказ
               </Button>
             </div>
           </div>
@@ -250,7 +255,7 @@ export function StageManager() {
               <div className="grid gap-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>Stage Number</Label>
+                    <Label>Номер на етап</Label>
                     <Input
                       type="number"
                       value={editingStage.stage}
@@ -264,7 +269,7 @@ export function StageManager() {
                     />
                   </div>
                   <div>
-                    <Label>Next Stage</Label>
+                    <Label>Следващ етап</Label>
                     <Input
                       type="number"
                       value={editingStage.nextStage || ""}
@@ -280,7 +285,7 @@ export function StageManager() {
                   </div>
                 </div>
                 <div>
-                  <Label>Subject</Label>
+                  <Label>Тема</Label>
                   <Input
                     value={editingStage.subject}
                     onChange={(e) =>
@@ -293,7 +298,7 @@ export function StageManager() {
                   />
                 </div>
                 <div>
-                  <Label>Trigger Phrase</Label>
+                  <Label>Ключова фраза</Label>
                   <Input
                     value={editingStage.trigger}
                     onChange={(e) =>
@@ -307,7 +312,7 @@ export function StageManager() {
                   />
                 </div>
                 <div>
-                  <Label>Description</Label>
+                  <Label>Описание</Label>
                   <Input
                     value={editingStage.description}
                     onChange={(e) =>
@@ -320,7 +325,7 @@ export function StageManager() {
                   />
                 </div>
                 <div>
-                  <Label>Email Body</Label>
+                  <Label>Съдържание на имейла</Label>
                   <Textarea
                     value={editingStage.body}
                     onChange={(e) =>
@@ -343,7 +348,7 @@ export function StageManager() {
                         })
                       }
                     />
-                    <Label>Active</Label>
+                    <Label>Активен</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -357,7 +362,7 @@ export function StageManager() {
                         })
                       }
                     />
-                    <Label>Initial Stage</Label>
+                    <Label>Начален етап</Label>
                   </div>
                 </div>
                 <div className="flex space-x-2">
@@ -366,7 +371,7 @@ export function StageManager() {
                     className="bg-white font-mono text-black hover:bg-zinc-200"
                   >
                     <Save className="mr-2 h-4 w-4" />
-                    Save
+                    Запази
                   </Button>
                   <Button
                     variant="outline"
@@ -374,7 +379,7 @@ export function StageManager() {
                     className="border-zinc-800 font-mono hover:bg-zinc-900"
                   >
                     <X className="mr-2 h-4 w-4" />
-                    Cancel
+                    Отказ
                   </Button>
                 </div>
               </div>
@@ -382,9 +387,9 @@ export function StageManager() {
               <div>
                 <div className="mb-2 flex items-center justify-between">
                   <h3 className="font-mono text-lg font-bold">
-                    Stage {stage.stage}{" "}
-                    {stage.isInitial && <span className="ml-2 text-sm text-green-500">(Initial)</span>}
-                    {!stage.isActive && <span className="ml-2 text-sm text-zinc-500">(Inactive)</span>}
+                    Етап {stage.stage}{" "}
+                    {stage.isInitial && <span className="ml-2 text-sm text-green-500">(Начален)</span>}
+                    {!stage.isActive && <span className="ml-2 text-sm text-zinc-500">(Неактивен)</span>}
                   </h3>
                   <div className="flex space-x-2">
                     <Button variant="ghost" onClick={() => setEditingStage(stage)} className="hover:bg-zinc-900">
@@ -397,23 +402,23 @@ export function StageManager() {
                 </div>
                 <div className="grid gap-2 text-sm">
                   <p>
-                    <span className="font-bold">Subject:</span> {stage.subject}
+                    <span className="font-bold">Тема:</span> {stage.subject}
                   </p>
                   {!stage.isInitial && (
                     <>
                       <p>
-                        <span className="font-bold">Trigger:</span> {stage.trigger}
+                        <span className="font-bold">Ключова фраза:</span> {stage.trigger}
                       </p>
                       <p>
-                        <span className="font-bold">Next Stage:</span> {stage.nextStage}
+                        <span className="font-bold">Следващ етап:</span> {stage.nextStage}
                       </p>
                     </>
                   )}
                   <p>
-                    <span className="font-bold">Description:</span> {stage.description}
+                    <span className="font-bold">Описание:</span> {stage.description}
                   </p>
                   <div>
-                    <span className="font-bold">Body:</span>
+                    <span className="font-bold">Съдържание:</span>
                     <pre className="mt-1 whitespace-pre-wrap rounded bg-black p-2 font-mono text-xs">{stage.body}</pre>
                   </div>
                 </div>

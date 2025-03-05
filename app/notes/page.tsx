@@ -6,8 +6,8 @@ import { Footer } from "@/components/layout/footer"
 import { NoteList } from "@/components/notes/note-list"
 
 export const metadata = {
-  title: "Dark River | Investigation Notes",
-  description: "Keep track of your investigation notes",
+  title: "Dark River | Бележки от разследването",
+  description: "Следете вашите бележки от разследването в Dark River - организирайте улики и информация",
 }
 
 export default async function NotesPage() {
@@ -21,16 +21,16 @@ export default async function NotesPage() {
 
   return (
     <>
-      <Navbar userName={session.name} isAdmin={session.isAdmin} />
+      <Navbar userName={session.name} isAdmin={session.isAdmin} isDonor={session.isDonor} />
       <main className="flex min-h-screen flex-col bg-black p-4 text-white">
         <div className="mx-auto w-full max-w-6xl flex-1 py-20">
           <div className="h-[calc(100vh-12rem)] rounded-lg border border-zinc-800 bg-zinc-950">
-            <div className="grid h-full grid-cols-[300px,1fr]">
+            <div className="grid h-full grid-cols-1 md:grid-cols-[300px,1fr]">
               <NoteList notes={notes} />
-              <div className="flex items-center justify-center p-4 text-center text-zinc-500">
+              <div className="hidden md:flex items-center justify-center p-4 text-center text-zinc-500">
                 <div>
-                  <p className="mb-2 font-mono">Select a note or create a new one</p>
-                  <p className="text-sm">Keep track of important information during your investigation</p>
+                  <p className="mb-2 font-mono">Изберете бележка или създайте нова</p>
+                  <p className="text-sm">Следете важната информация по време на разследването</p>
                 </div>
               </div>
             </div>

@@ -5,8 +5,8 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 
 export const metadata = {
-  title: "Dark River | Privacy Policy",
-  description: "Privacy Policy for Dark River",
+  title: "Dark River | Политика за поверителност",
+  description: "Политика за поверителност на Dark River",
 }
 
 export default async function PrivacyPage() {
@@ -18,114 +18,137 @@ export default async function PrivacyPage() {
 
   return (
     <>
-      <Navbar userName={session.name} isAdmin={session.isAdmin} />
+      <Navbar userName={session.name} isAdmin={session.isAdmin} isDonor={session.isDonor} />
       <main className="flex min-h-screen flex-col bg-black p-4 text-white">
         <div className="mx-auto w-full max-w-4xl flex-1 py-20">
           <div className="mb-8">
-            <h1 className="font-mono text-4xl font-bold tracking-tighter text-white">PRIVACY POLICY</h1>
-            <p className="mt-2 text-zinc-400">Last updated: March 1, 2025</p>
+            <h1 className="font-mono text-4xl font-bold tracking-tighter text-white">ПОЛИТИКА ЗА ПОВЕРИТЕЛНОСТ</h1>
+            <p className="mt-2 text-zinc-400">Последна актуализация: 1 март, 2025</p>
           </div>
 
           <div className="space-y-6 font-mono">
             <section className="space-y-4">
-              <h2 className="text-xl font-bold">1. INTRODUCTION</h2>
+              <h2 className="text-xl font-bold">1. ВЪВЕДЕНИЕ</h2>
               <p className="text-zinc-300">
-                Dark River (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting your privacy.
-                This Privacy Policy explains how we collect, use, and safeguard your information when you use our
-                service.
+                Dark River ("ние", "нашият" или "нас") е ангажиран със защитата на вашата поверителност. Тази Политика
+                за поверителност обяснява как събираме, използваме и защитаваме вашата информация, когато използвате
+                нашата услуга.
               </p>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold">2. INFORMATION WE COLLECT</h2>
-              <p className="text-zinc-300">We collect the following types of information:</p>
+              <h2 className="text-xl font-bold">2. ИНФОРМАЦИЯ, КОЯТО СЪБИРАМЕ</h2>
+              <p className="text-zinc-300">Събираме следните видове информация:</p>
               <ul className="list-disc pl-6 text-zinc-300">
                 <li>
-                  <strong>Account Information:</strong> When you create an account, we collect your name, email address,
-                  and password.
+                  <strong>Информация за акаунта:</strong> Когато създавате акаунт, събираме вашето име, имейл адрес и
+                  парола.
                 </li>
                 <li>
-                  <strong>Usage Data:</strong> We collect information about how you interact with our service, including
-                  your progress through the narrative.
+                  <strong>Данни за използване:</strong> Събираме информация за това как взаимодействате с нашата услуга,
+                  включително вашия прогрес през наратива.
                 </li>
                 <li>
-                  <strong>Communications:</strong> If you contact us directly, we may receive additional information
-                  about you, such as your name, email address, and the contents of your message.
+                  <strong>Комуникации:</strong> Ако се свържете с нас директно, може да получим допълнителна информация
+                  за вас, като вашето име, имейл адрес и съдържанието на вашето съобщение.
                 </li>
                 <li>
-                  <strong>Investigation Notes:</strong> We store the notes you create during your investigation to help
-                  you track important information. These notes are private and only accessible to you.
+                  <strong>Бележки от разследването:</strong> Съхраняваме бележките, които създавате по време на вашето
+                  разследване, за да ви помогнем да следите важна информация. Тези бележки са лични и достъпни само за
+                  вас.
                 </li>
               </ul>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold">3. HOW WE USE YOUR INFORMATION</h2>
-              <p className="text-zinc-300">We use the information we collect to:</p>
+              <h2 className="text-xl font-bold">3. КАК ИЗПОЛЗВАМЕ ВАШАТА ИНФОРМАЦИЯ</h2>
+              <p className="text-zinc-300">Използваме събраната информация, за да:</p>
               <ul className="list-disc pl-6 text-zinc-300">
-                <li>Provide, maintain, and improve our service</li>
-                <li>Create and manage your account</li>
-                <li>Track your progress through the narrative</li>
-                <li>Respond to your inquiries and provide customer support</li>
-                <li>Send you updates and administrative messages</li>
-                <li>Monitor and analyze usage patterns and trends</li>
+                <li>Предоставяме, поддържаме и подобряваме нашата услуга</li>
+                <li>Създаваме и управляваме вашия акаунт</li>
+                <li>Проследяваме вашия прогрес през наратива</li>
+                <li>Отговаряме на ваши запитвания и предоставяме поддръжка</li>
+                <li>Изпращаме ви актуализации и административни съобщения</li>
+                <li>Наблюдаваме и анализираме модели на използване и тенденции</li>
               </ul>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold">4. DATA SECURITY</h2>
+              <h2 className="text-xl font-bold">4. ДАННИ ЗА СЪОБЩЕНИЯТА В ОБЩНОСТТА</h2>
               <p className="text-zinc-300">
-                We implement appropriate technical and organizational measures to protect your personal information
-                against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission
-                over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.
-              </p>
-            </section>
-
-            <section className="space-y-4">
-              <h2 className="text-xl font-bold">5. DATA RETENTION</h2>
-              <p className="text-zinc-300">
-                We will retain your personal information only for as long as necessary to fulfill the purposes outlined
-                in this Privacy Policy, unless a longer retention period is required or permitted by law.
-              </p>
-            </section>
-
-            <section className="space-y-4">
-              <h2 className="text-xl font-bold">6. YOUR RIGHTS</h2>
-              <p className="text-zinc-300">
-                Depending on your location, you may have certain rights regarding your personal information, including:
+                Когато използвате нашата платформа за съобщения в общността, събираме и съхраняваме:
               </p>
               <ul className="list-disc pl-6 text-zinc-300">
-                <li>The right to access the personal information we hold about you</li>
-                <li>The right to request correction of inaccurate information</li>
-                <li>The right to request deletion of your personal information</li>
-                <li>The right to object to processing of your personal information</li>
-                <li>The right to data portability</li>
+                <li>Съдържание на съобщенията и времеви печати</li>
+                <li>Данни за взаимодействие между потребителите</li>
+                <li>Действия по модерация и история</li>
+                <li>Записи за участие в общността</li>
+              </ul>
+              <p className="text-zinc-300">Тази информация се използва за:</p>
+              <ul className="list-disc pl-6 text-zinc-300">
+                <li>Предоставяне и поддържане на услугата за съобщения</li>
+                <li>Прилагане на правилата на общността</li>
+                <li>Защита на безопасността на потребителите и интегритета на платформата</li>
+                <li>Подобряване на потребителското изживяване</li>
               </ul>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold">7. COOKIES AND TRACKING TECHNOLOGIES</h2>
+              <h2 className="text-xl font-bold">5. СИГУРНОСТ НА ДАННИТЕ</h2>
               <p className="text-zinc-300">
-                We use cookies and similar tracking technologies to track activity on our service and hold certain
-                information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being
-                sent.
+                Прилагаме подходящи технически и организационни мерки за защита на вашата лична информация срещу
+                неоторизиран достъп, промяна, разкриване или унищожаване. Въпреки това, никой метод на предаване по
+                интернет или електронно съхранение не е 100% сигурен, и не можем да гарантираме абсолютна сигурност.
               </p>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold">8. CHANGES TO THIS PRIVACY POLICY</h2>
+              <h2 className="text-xl font-bold">6. ЗАПАЗВАНЕ НА ДАННИ</h2>
               <p className="text-zinc-300">
-                We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new
-                Privacy Policy on this page and updating the &quot;Last updated&quot; date.
+                Ще запазим вашата лична информация само за времето, необходимо за изпълнение на целите, описани в тази
+                Политика за поверителност, освен ако по-дълъг период на запазване не се изисква или позволява от закона.
               </p>
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl font-bold">9. CONTACT US</h2>
+              <h2 className="text-xl font-bold">7. ВАШИТЕ ПРАВА</h2>
               <p className="text-zinc-300">
-                If you have any questions about this Privacy Policy, please contact us at{" "}
+                В зависимост от вашето местоположение, може да имате определени права относно вашата лична информация,
+                включително:
+              </p>
+              <ul className="list-disc pl-6 text-zinc-300">
+                <li>Правото на достъп до личната информация, която съхраняваме за вас</li>
+                <li>Правото да поискате корекция на неточна информация</li>
+                <li>Правото да поискате изтриване на вашата лична информация</li>
+                <li>Правото да възразите срещу обработката на вашата лична информация</li>
+                <li>Правото на преносимост на данните</li>
+              </ul>
+            </section>
+
+            <section className="space-y-4">
+              <h2 className="text-xl font-bold">8. БИСКВИТКИ И ТЕХНОЛОГИИ ЗА ПРОСЛЕДЯВАНЕ</h2>
+              <p className="text-zinc-300">
+                Използваме бисквитки и подобни технологии за проследяване, за да следим активността в нашата услуга и да
+                съхраняваме определена информация. Можете да инструктирате вашия браузър да отказва всички бисквитки или
+                да показва кога се изпраща бисквитка.
+              </p>
+            </section>
+
+            <section className="space-y-4">
+              <h2 className="text-xl font-bold">9. ПРОМЕНИ В ТАЗИ ПОЛИТИКА ЗА ПОВЕРИТЕЛНОСТ</h2>
+              <p className="text-zinc-300">
+                Може да актуализираме нашата Политика за поверителност от време на време. Ще ви уведомим за всякакви
+                промени, като публикуваме новата Политика за поверителност на тази страница и актуализираме датата
+                "Последна актуализация".
+              </p>
+            </section>
+
+            <section className="space-y-4">
+              <h2 className="text-xl font-bold">10. СВЪРЖЕТЕ СЕ С НАС</h2>
+              <p className="text-zinc-300">
+                Ако имате въпроси относно тази Политика за поверителност, моля свържете се с нас на{" "}
                 <Link href="/contact" className="text-white underline hover:text-zinc-300">
-                  our contact page
+                  нашата страница за контакт
                 </Link>
                 .
               </p>

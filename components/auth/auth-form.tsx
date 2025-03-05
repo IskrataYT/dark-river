@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import type * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -9,7 +9,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { OTPVerification } from "@/components/auth/otp-verification"
+import dynamic from "next/dynamic"
+
+// Dynamically import OTP verification component
+const OTPVerification = dynamic(() => import("@/components/auth/otp-verification"), {
+  loading: () => <div className="p-4 text-center text-zinc-400">Loading verification...</div>,
+})
 
 interface FormData {
   name: string
@@ -31,6 +36,7 @@ export default function AuthForm() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [passwordError, setPasswordError] = useState("")
   const [showOTPInput, setShowOTPInput] = useState(false)
+  const [verificationEmail, setVerificationEmail] = useState("")
 
   const validatePasswords = () => {
     if (isSignUp && formData.password !== confirmPassword) {
@@ -74,10 +80,11 @@ export default function AuthForm() {
       }
 
       if (isSignUp) {
-        // Show OTP input after successful signup
+        // Store email for verification and show OTP input
+        setVerificationEmail(formData.email)
         setShowOTPInput(true)
       } else {
-        // Redirect to loading page instead of home
+        // Redirect to loading page
         router.push("/loading?redirectTo=/")
       }
     } catch (err) {
@@ -87,10 +94,10 @@ export default function AuthForm() {
     }
   }
 
-  if (showOTPInput) {
+  if (showOTPInput && verificationEmail) {
     return (
       <OTPVerification
-        email={formData.email}
+        email={verificationEmail}
         onSuccess={() => {
           router.push("/loading?redirectTo=/")
         }}
@@ -100,7 +107,7 @@ export default function AuthForm() {
 
   return (
     <div className="space-y-4">
-      <div className="mb-6 grid grid-cols-2 gap-px overflow-hidden rounded bg-zinc-800">
+      <div className="mb-6 grid grid-cols-2 gap-px overflow-hidden rounded bg-zinc-800 text-xs sm:text-sm">
         <button
           onClick={() => {
             setIsSignUp(false)
@@ -111,7 +118,7 @@ export default function AuthForm() {
           }`}
           type="button"
         >
-          SIGN IN
+          ВХОД
           {!isSignUp && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white" />}
         </button>
         <button
@@ -124,7 +131,7 @@ export default function AuthForm() {
           }`}
           type="button"
         >
-          NEW AGENT
+          НОВ АГЕНТ
           {isSignUp && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white" />}
         </button>
       </div>
@@ -133,7 +140,7 @@ export default function AuthForm() {
         {isSignUp && (
           <div className="space-y-2">
             <Label htmlFor="name" className="font-mono text-xs text-zinc-400">
-              AGENT NAME
+              ИМЕ НА АГЕНТА
             </Label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -142,7 +149,7 @@ export default function AuthForm() {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                placeholder="Enter your agent name"
+                placeholder="Въведете вашето име на агент"
                 className="border-zinc-800 bg-black pl-10 font-mono text-sm text-white placeholder:text-zinc-700"
                 required={isSignUp}
               />
@@ -152,7 +159,7 @@ export default function AuthForm() {
 
         <div className="space-y-2">
           <Label htmlFor="email" className="font-mono text-xs text-zinc-400">
-            EMAIL IDENTIFIER
+            ИМЕЙЛ ИДЕНТИФИКАТОР
           </Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -171,7 +178,7 @@ export default function AuthForm() {
 
         <div className="space-y-2">
           <Label htmlFor="password" className="font-mono text-xs text-zinc-400">
-            ACCESS CODE
+            КОД ЗА ДОСТЪП
           </Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -198,7 +205,7 @@ export default function AuthForm() {
         {isSignUp && (
           <div className="space-y-2">
             <Label htmlFor="confirmPassword" className="font-mono text-xs text-zinc-400">
-              CONFIRM ACCESS CODE
+              ПОТВЪРДИ КОД ЗА ДОСТЪП
             </Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -224,7 +231,7 @@ export default function AuthForm() {
               className="border-zinc-800 bg-black data-[state=checked]:bg-white data-[state=checked]:text-black"
             />
             <Label htmlFor="remember" className="text-xs text-zinc-400">
-              Remember terminal
+              Запомни терминал
             </Label>
           </div>
         )}
@@ -236,22 +243,31 @@ export default function AuthForm() {
         >
           {isLoading ? (
             <span className="flex items-center justify-center">
-              <span className="mr-2">PROCESSING</span>
+              <span className="mr-2">ОБРАБОТКА</span>
               <span className="loading">...</span>
             </span>
           ) : (
             <span className="flex items-center justify-center">
-              {isSignUp ? "CREATE ACCESS" : "AUTHENTICATE"}
+              {isSignUp ? (
+                <>
+                  <span className="hidden sm:inline">СЪЗДАЙ ДОСТЪП</span>
+                  <span className="sm:hidden">РЕГИСТРАЦИЯ</span>
+                </>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">УДОСТОВЕРЯВАНЕ</span>
+                  <span className="sm:hidden">ВХОД</span>
+                </>
+              )}
               <ArrowRight className="ml-2 h-4 w-4" />
             </span>
           )}
         </Button>
       </form>
-
       {!isSignUp && (
         <div className="text-center">
           <Link href="/auth/forgot-password" className="text-xs text-zinc-600 transition-colors hover:text-white">
-            Forgot access code?
+            Забравен код за достъп?
           </Link>
         </div>
       )}

@@ -5,14 +5,21 @@ import { Channel } from "@/lib/models/channel"
 import { z } from "zod"
 
 const channelSchema = z.object({
-  name: z.string().min(3, "Channel name must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+  name: z.string().min(1, "Channel name is required"),
+  description: z.string().min(1, "Channel description is required"),
 })
 
-export async function GET() {
+// Get all channels
+export async function GET(req: NextRequest) {
   try {
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     await connectDB()
     const channels = await Channel.find().sort({ name: 1 })
+
     return NextResponse.json({ channels })
   } catch (error) {
     console.error("Failed to fetch channels:", error)
@@ -20,6 +27,7 @@ export async function GET() {
   }
 }
 
+// Create new channel
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession()
@@ -32,12 +40,19 @@ export async function POST(req: NextRequest) {
 
     await connectDB()
 
+    // Check if channel name already exists
     const existingChannel = await Channel.findOne({ name: validatedData.name })
     if (existingChannel) {
-      return NextResponse.json({ error: "Channel already exists" }, { status: 400 })
+      return NextResponse.json({ error: "Channel name already exists" }, { status: 400 })
     }
 
-    const channel = await Channel.create(validatedData)
+    // Add the createdBy field with the current user's ID
+    // Use the session ID directly if user object is not available
+    const channel = await Channel.create({
+      ...validatedData,
+      createdBy: session.id, // Use session.id instead of session.user.id
+    })
+
     return NextResponse.json({ channel }, { status: 201 })
   } catch (error) {
     console.error("Failed to create channel:", error)

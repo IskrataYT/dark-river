@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { format } from "date-fns"
 import { Mail } from "lucide-react"
+import { KofiButton } from "@/components/donation/kofi-button"
 
 interface Email {
   id: string
@@ -78,7 +79,7 @@ export function EmailInbox({ folder, onSelectEmail, refreshTrigger, onLastStageC
     debug.log("Rendering loading state")
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="text-zinc-400">Loading...</div>
+        <div className="text-zinc-400">Зареждане...</div>
       </div>
     )
   }
@@ -89,7 +90,7 @@ export function EmailInbox({ folder, onSelectEmail, refreshTrigger, onLastStageC
       <div className="flex h-full items-center justify-center">
         <div className="text-center text-zinc-400">
           <Mail className="mx-auto mb-2 h-8 w-8" />
-          No messages
+          Няма съобщения
         </div>
       </div>
     )
@@ -98,10 +99,15 @@ export function EmailInbox({ folder, onSelectEmail, refreshTrigger, onLastStageC
   if (isLastStage) {
     return (
       <div className="h-full overflow-auto">
-        <div className="border-b border-green-500/20 bg-green-500/10 p-4">
-          <p className="font-mono text-center text-green-500">
-            CONGRATULATIONS - YOU HAVE COMPLETED ALL AVAILABLE STAGES
+        <div className="border-b border-green-500/20 bg-green-500/10 p-4 space-y-3">
+          <p className="font-mono text-center text-green-500 text-lg">ПОЗДРАВЛЕНИЯ - ЗАВЪРШИХТЕ ВСИЧКИ НАЛИЧНИ ЕТАПИ</p>
+          <p className="font-mono text-center text-zinc-400 text-sm">
+            Благодарим ви за участието в Dark River. Вашата подкрепа ни помага да създаваме нови етапи и да подобряваме
+            платформата.
           </p>
+          <div className="flex justify-center mt-2">
+            <KofiButton />
+          </div>
         </div>
         {emails.map((email) => (
           <button
@@ -112,14 +118,18 @@ export function EmailInbox({ folder, onSelectEmail, refreshTrigger, onLastStageC
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className={`font-mono text-sm ${email.read ? "text-zinc-400" : "text-white"}`}>
+                  <span className={`font-mono text-xs sm:text-sm ${email.read ? "text-zinc-400" : "text-white"}`}>
                     {folder === "sent" ? email.recipient : email.sender}
                   </span>
                   {!email.read && <span className="h-2 w-2 rounded-full bg-blue-500" />}
                 </div>
-                <div className={`font-mono ${email.read ? "text-zinc-400" : "text-white"}`}>{email.subject}</div>
+                <div
+                  className={`font-mono text-xs sm:text-sm break-words ${email.read ? "text-zinc-400" : "text-white"}`}
+                >
+                  {email.subject}
+                </div>
               </div>
-              <div className="text-xs text-zinc-500">{format(email.timestamp, "MMM d, h:mm a")}</div>
+              <div className="text-xs text-zinc-500 whitespace-nowrap">{format(email.timestamp, "MMM d, h:mm a")}</div>
             </div>
           </button>
         ))}
@@ -139,14 +149,20 @@ export function EmailInbox({ folder, onSelectEmail, refreshTrigger, onLastStageC
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 space-y-1">
               <div className="flex items-center gap-2">
-                <span className={`font-mono text-sm ${email.read ? "text-zinc-400" : "text-white"}`}>
+                <span className={`font-mono text-xs sm:text-sm ${email.read ? "text-zinc-400" : "text-white"}`}>
                   {folder === "sent" ? email.recipient : email.sender}
                 </span>
                 {!email.read && <span className="h-2 w-2 rounded-full bg-blue-500" />}
               </div>
-              <div className={`font-mono ${email.read ? "text-zinc-400" : "text-white"}`}>{email.subject}</div>
+              <div
+                className={`font-mono text-xs sm:text-sm break-words ${email.read ? "text-zinc-400" : "text-white"}`}
+              >
+                {email.subject}
+              </div>
             </div>
-            <div className="text-xs text-zinc-500">{format(email.timestamp, "MMM d, h:mm a")}</div>
+            <div className="text-xs text-zinc-500 whitespace-nowrap">
+              {format(new Date(email.timestamp), "d MMM, HH:mm")}
+            </div>
           </div>
         </button>
       ))}
